@@ -5,6 +5,9 @@ from flask_cors import CORS
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 
+app = Flask(__name__)
+
+
 def is_prime(number: int) -> bool:
     """ This Function is used to check if a number is prime
     Argument:
