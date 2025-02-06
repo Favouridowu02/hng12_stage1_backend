@@ -1,22 +1,17 @@
-#!/usr/bin/env python3
-import os
-from flask import Flask, jsonify, request
+from flask import Flask, request, jsonify
+import requests
 from flask_cors import CORS
-from datetime import datetime, timezone
-from dotenv import load_dotenv
 
 app = Flask(__name__)
+CORS(app)
 
-
-def is_prime(number: int) -> bool:
-    """ This Function is used to check if a number is prime
-    Argument:
-        number: the number
-        Return: True if the number is a prime else false
-    """
-    if number % 2 == 0:
+def is_prime(n):
+    if n < 2:
         return False
-    return 
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
 
 def is_perfect(n):
     return n == sum(i for i in range(1, n) if n % i == 0)
@@ -57,4 +52,4 @@ def classify_number():
     })
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
