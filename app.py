@@ -8,56 +8,50 @@ from dotenv import load_dotenv
 def is_prime(number: int) -> bool:
     """ This Function is used to check if a number is prime
     Argument:
-        number: the number to the argument
+        number: the number
         Return: True if the number is a prime else false
     """
     if number % 2 == 0:
         return False
     return 
 
-def is_perfect(number: int) -> bool:
-    """
-        This function is used to check is a number is perfect
-            Argument:
-        number: the number to the argument
-        Return: True if the number is a perfect else false
-    """
-    total = 0 
-    for i in str(number):
-        total += int(i)
-    return total == number
+def is_perfect(n):
+    return n == sum(i for i in range(1, n) if n % i == 0)
 
+def is_armstrong(n):
+    digits = [int(d) for d in str(n)]
+    return n == sum(d ** len(digits) for d in digits)
 
-# Load environment variables from .env file
-load_dotenv()
+def digit_sum(n):
+    return sum(int(d) for d in str(n))
 
-app = Flask(__name__)
-CORS(app)
+def get_fun_fact(n):
+    try:
+        response = requests.get(f"http://numbersapi.com/{n}")
+        return response.text if response.status_code == 200 else "No fun fact found."
+    except requests.RequestException:
+        return "Error fetching fun fact."
 
-@app.route('/', methods=['GET'])
-def home():
-    """
-    This function returns a JSON response with email, current datetime, and GitHub URL.
-    """
-    return jsonify({"greetings": "welcome onboard cracker"})
-
-@app.route('/api/classify_numbers', methods=["GET"], strict_paramter=False)
+@app.route('/api/classify-number', methods=['GET'])
 def classify_number():
-    """GET /api/classify_numbers
-    Description: Returns Funfacts about Numbers
-    Return: A JSON Representation 
-    """
-    number = int(request.args.get("number"))
-
-
-    information = {
+    number = request.args.get('number')
+    if not number or not number.lstrip('-').isdigit():
+        return jsonify({"number": number, "error": True}), 400
+    
+    number = int(number)
+    properties = []
+    if is_armstrong(number):
+        properties.append("armstrong")
+    properties.append("even" if number % 2 == 0 else "odd")
+    
+    return jsonify({
         "number": number,
         "is_prime": is_prime(number),
         "is_perfect": is_perfect(number),
-        "properties": ["armstrong", "odd"],
-        "digit_sum": 11,
-        "fun_fact": "371 is an Armstrong number because 3^3 + 7^3 + 1^3 = 371" 
-    }
+        "properties": properties,
+        "digit_sum": digit_sum(number),
+        "fun_fact": get_fun_fact(number)
+    })
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+if __name__ == '__main__':
+    app.run()
