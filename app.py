@@ -49,7 +49,7 @@ def classify_number():
         "properties": properties,
         "digit_sum": digit_sum(number),
         "fun_fact": get_fun_fact(number)
-    })
+    }), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
